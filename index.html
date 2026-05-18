@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>漢讀 HanRead — 訂閱 Substack，在 Kindle 上閱讀</title>
+  <meta name="description" content="把你的付費 Substack 訂閱，每週自動送到 Kindle／Kobo，以乾淨的 EPUB 排版呈現。專為繁體中文讀者設計。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;700&family=Noto+Sans+TC:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:      #1a1a1a;
+      --ink-soft: #4a4a4a;
+      --ink-mute: #888;
+      --paper:    #faf8f4;
+      --paper-2:  #f2ede4;
+      --accent:   #3d6b4f;   /* forest green — reading, calm */
+      --accent-hover: #2e5340;
+      --border:   #d9d0c3;
+      --radius:   10px;
+      --max-w:    720px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      line-height: 1.8;
+      font-size: 16px;
+    }
+
+    /* ── NAV ── */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 1.5rem 1.5rem;
+    }
+    .logo {
+      font-family: 'Noto Serif TC', serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--ink);
+      text-decoration: none;
+      letter-spacing: .04em;
+    }
+    .logo span { color: var(--accent); }
+    nav .lang-note {
+      font-size: .8rem;
+      color: var(--ink-mute);
+      letter-spacing: .02em;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 4rem 1.5rem 3rem;
+      text-align: center;
+    }
+    .eyebrow {
+      display: inline-block;
+      font-size: .78rem;
+      font-weight: 500;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--accent);
+      padding: .25rem .75rem;
+      border-radius: 20px;
+    }
+    h1 {
+      font-family: 'Noto Serif TC', serif;
+      font-size: clamp(1.9rem, 5vw, 2.7rem);
+      font-weight: 700;
+      line-height: 1.35;
+      color: var(--ink);
+      margin-bottom: 1.25rem;
+      letter-spacing: .03em;
+    }
+    .hero-sub {
+      font-size: 1.05rem;
+      color: var(--ink-soft);
+      max-width: 520px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.85;
+    }
+    .hero-sub .en {
+      display: block;
+      margin-top: .5rem;
+      font-size: .88rem;
+      color: var(--ink-mute);
+    }
+
+    /* ── CTA BUTTON (link to waitlist form) ── */
+    .btn-primary {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 500;
+      padding: .85rem 2.2rem;
+      border-radius: var(--radius);
+      letter-spacing: .04em;
+      transition: background .18s;
+    }
+    .btn-primary:hover { background: var(--accent-hover); }
+
+    /* ── DIVIDER ── */
+    .divider {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      border: none;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── PROBLEM ── */
+    .section {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 3.5rem 1.5rem;
+    }
+    .section-label {
+      font-size: .75rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 500;
+      margin-bottom: 1rem;
+    }
+    h2 {
+      font-family: 'Noto Serif TC', serif;
+      font-size: clamp(1.35rem, 3.5vw, 1.8rem);
+      font-weight: 700;
+      line-height: 1.45;
+      margin-bottom: 1.25rem;
+      letter-spacing: .03em;
+    }
+    p { margin-bottom: 1rem; color: var(--ink-soft); }
+    p:last-child { margin-bottom: 0; }
+
+    .pain-list {
+      list-style: none;
+      margin: 1.5rem 0 0;
+      display: flex;
+      flex-direction: column;
+      gap: .85rem;
+    }
+    .pain-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: .85rem;
+      color: var(--ink-soft);
+      font-size: .97rem;
+    }
+    .pain-list li::before {
+      content: '×';
+      flex-shrink: 0;
+      width: 1.4rem;
+      height: 1.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fbeaea;
+      color: #b94040;
+      border-radius: 50%;
+      font-size: .8rem;
+      font-weight: 700;
+      margin-top: .15rem;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+      margin-top: 1.75rem;
+    }
+    .step {
+      display: flex;
+      gap: 1.25rem;
+      align-items: flex-start;
+    }
+    .step-num {
+      flex-shrink: 0;
+      width: 2.2rem;
+      height: 2.2rem;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-family: 'Noto Serif TC', serif;
+      font-size: .9rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: .1rem;
+    }
+    .step-body h3 {
+      font-family: 'Noto Serif TC', serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: .3rem;
+      color: var(--ink);
+    }
+    .step-body p { font-size: .95rem; margin: 0; }
+
+    /* ── WHY FOR CHINESE READERS ── */
+    .why-box {
+      background: var(--paper-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.25rem 2rem;
+    }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem 2rem;
+      margin-top: 1.5rem;
+    }
+    @media (max-width: 520px) {
+      .feature-grid { grid-template-columns: 1fr; }
+    }
+    .feature-item h4 {
+      font-family: 'Noto Serif TC', serif;
+      font-size: .97rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: .3rem;
+    }
+    .feature-item p { font-size: .88rem; margin: 0; }
+
+    /* ── WAITLIST SECTION ── */
+    #waitlist {
+      background: var(--paper-2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    #waitlist .section {
+      text-align: center;
+    }
+    #waitlist h2 { margin-bottom: .75rem; }
+    #waitlist .sub {
+      font-size: .97rem;
+      color: var(--ink-mute);
+      margin-bottom: 2rem;
+    }
+
+    /* Formspree form */
+    /* ACTION: replace REPLACE_WITH_FORM_ID below with your real Formspree form ID */
+    .waitlist-form {
+      display: flex;
+      gap: .75rem;
+      max-width: 440px;
+      margin: 0 auto;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .waitlist-form input[type="email"] {
+      flex: 1 1 240px;
+      padding: .8rem 1.1rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      font-size: .97rem;
+      font-family: inherit;
+      background: #fff;
+      color: var(--ink);
+      outline: none;
+      transition: border-color .15s;
+    }
+    .waitlist-form input[type="email"]:focus {
+      border-color: var(--accent);
+    }
+    .waitlist-form input[type="email"]::placeholder { color: var(--ink-mute); }
+    .waitlist-form button {
+      flex-shrink: 0;
+      padding: .8rem 1.8rem;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      font-size: .97rem;
+      font-family: inherit;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background .18s;
+      letter-spacing: .03em;
+    }
+    .waitlist-form button:hover { background: var(--accent-hover); }
+
+    .form-note {
+      margin-top: 1rem;
+      font-size: .8rem;
+      color: var(--ink-mute);
+    }
+
+    /* Thank-you state — hidden by default, shown by JS after submit */
+    .thank-you {
+      display: none;
+      background: #eaf4ee;
+      border: 1px solid #a8d4b4;
+      border-radius: var(--radius);
+      padding: 1.25rem 1.75rem;
+      max-width: 440px;
+      margin: 0 auto;
+      color: var(--accent);
+      font-size: 1rem;
+      font-family: 'Noto Serif TC', serif;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      font-size: .8rem;
+      color: var(--ink-mute);
+    }
+
+    /* ── UTIL ── */
+    .mt-2 { margin-top: 2rem; }
+    .text-center { text-align: center; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════ NAV ═══════════════════════════ -->
+<nav>
+  <a class="logo" href="#">漢<span>讀</span> HanRead</a>
+  <span class="lang-note">繁體中文 · EN</span>
+</nav>
+
+<!-- ═══════════════════════════════════════ HERO ══════════════════════════ -->
+<section class="hero">
+  <span class="eyebrow">候補名單 · Waitlist</span>
+  <h1>你的付費 Substack，<br>每週送進 Kindle</h1>
+  <p class="hero-sub">
+    訂閱了好幾份 Substack，卻只能在手機信箱裡碎片閱讀？<br>
+    漢讀把這週的文章打包成一本 EPUB，自動送到你的電子書閱讀器——<br>
+    繁體中文排版，像真正的書一樣閱讀。
+    <span class="en">Paid Substack newsletters · bundled weekly · delivered to your Kindle as a clean EPUB digest · built for Traditional-Chinese readers.</span>
+  </p>
+  <a class="btn-primary" href="#waitlist">加入候補名單</a>
+</section>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════ PROBLEM ═══════════════════════ -->
+<section class="section">
+  <p class="section-label">你是不是也有這樣的困擾</p>
+  <h2>付費訂閱，卻沒辦法好好讀</h2>
+  <p>
+    你花錢訂閱了幾份值得認真閱讀的 Substack——但閱讀體驗卻很糟糕。
+  </p>
+  <ul class="pain-list">
+    <li>文章堆在信箱，打開率越來越低，等到有空再看往往就不看了</li>
+    <li>手機螢幕太小、背光傷眼，無法長時間深度閱讀</li>
+    <li>Kindle 上的其他書都在等你，但 Substack 就是進不去</li>
+    <li>現有的工具（Readwise、RSS-to-Kindle）英文優先，繁體中文排版一塌糊塗</li>
+    <li>每次手動轉檔、寄信、設字體……太麻煩，用了幾次就放棄了</li>
+  </ul>
+</section>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════ HOW IT WORKS ══════════════════ -->
+<section class="section">
+  <p class="section-label">運作方式</p>
+  <h2>三步設定，之後全自動</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">一</div>
+      <div class="step-body">
+        <h3>連結你的 Substack 訂閱</h3>
+        <p>貼上你訂閱的 Substack 網址。付費刊物透過簡單的 Email 轉寄設定，讓漢讀取得完整內容（文章仍屬於你的訂閱，不會外流）。</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">二</div>
+      <div class="step-body">
+        <h3>漢讀每週自動打包成 EPUB</h3>
+        <p>每週定時把這段時間的新文章整理成一份 EPUB 文摘：封面、目錄、每篇一章，繁體中文字體與排版，閱讀體驗乾淨舒適。</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">三</div>
+      <div class="step-body">
+        <h3>直接送進你的 Kindle 或 Kobo</h3>
+        <p>EPUB 自動寄到你的 Kindle 信箱（@kindle.com），一次設定好寄件人白名單，之後每週自動送達——不用再手動做任何事。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════ WHY CHINESE ════════════════════ -->
+<section class="section">
+  <div class="why-box">
+    <p class="section-label">為繁體中文讀者而生</p>
+    <h2>終於有一個工具<br>是真的為你設計的</h2>
+    <p>
+      市面上所有 Kindle 文章工具都是英文優先的——中文排版是事後補貼上去的，字體崩掉、標點擠在一起、行距失控。漢讀從一開始就以繁體中文為主角。
+    </p>
+    <div class="feature-grid">
+      <div class="feature-item">
+        <h4>繁體中文字體</h4>
+        <p>內嵌支援繁中的字型，在 Kindle 上呈現正確的字形與筆畫。</p>
+      </div>
+      <div class="feature-item">
+        <h4>自然的排版節奏</h4>
+        <p>中文標點、行距、段落縮排，讀起來像書，不像網頁截圖。</p>
+      </div>
+      <div class="feature-item">
+        <h4>繁簡處理正確</h4>
+        <p>不會把繁體文章轉成簡體字，也不會亂插入不對的字符。</p>
+      </div>
+      <div class="feature-item">
+        <h4>介面與通知全繁中</h4>
+        <p>設定頁面、寄送通知、錯誤提示——全部都是你看得懂的語言。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ WAITLIST ══════════════════════ -->
+<section id="waitlist">
+  <div class="section">
+    <h2>漢讀還在建構中</h2>
+    <p class="sub">
+      留下你的 Email，產品推出時第一個知道。<br>
+      <em>No spam. Unsubscribe anytime.</em>
+    </p>
+
+    <!-- ═══ FORMSPREE SETUP ═══
+         1. Go to https://formspree.io and create a free account.
+         2. Create a new form — choose "New Form", set your notification email.
+         3. Copy your form ID (looks like: xyzabcde).
+         4. Replace REPLACE_WITH_FORM_ID in the action URL below with that ID.
+         Example: action="https://formspree.io/f/xyzabcde"
+    ══════════════════════════ -->
+    <form
+      class="waitlist-form"
+      id="waitlist-form"
+      action="https://formspree.io/f/REPLACE_WITH_FORM_ID"
+      method="POST"
+    >
+      <input
+        type="email"
+        name="email"
+        placeholder="你的 Email 地址"
+        required
+        autocomplete="email"
+        aria-label="Email 地址"
+      />
+      <!-- Tell Formspree to skip its default redirect and let JS handle it -->
+      <input type="hidden" name="_next" value="about:blank" />
+      <button type="submit">加入候補名單 →</button>
+    </form>
+
+    <div class="thank-you" id="thank-you" role="alert">
+      🎉 收到了！漢讀上線時，你會是第一個知道的。謝謝你的支持。
+    </div>
+
+    <p class="form-note">我們只會在產品準備好時通知你，不會發送其他行銷郵件。</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ FOOTER ════════════════════════ -->
+<footer>
+  <p>© 2026 漢讀 HanRead &nbsp;·&nbsp; Built for Traditional-Chinese readers</p>
+</footer>
+
+<script>
+  // Intercept Formspree POST with fetch so we can show a thank-you state
+  // without a page reload. Falls back to normal form POST if JS is off.
+  const form = document.getElementById('waitlist-form');
+  const thankYou = document.getElementById('thank-you');
+
+  if (form) {
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const data = new FormData(form);
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: data,
+          headers: { 'Accept': 'application/json' }
+        });
+        if (res.ok) {
+          form.style.display = 'none';
+          thankYou.style.display = 'block';
+        } else {
+          // Let the browser do a normal submit so Formspree handles the error UI
+          form.removeEventListener('submit', arguments.callee);
+          form.submit();
+        }
+      } catch (_) {
+        form.removeEventListener('submit', arguments.callee);
+        form.submit();
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
